@@ -9,10 +9,10 @@ from nuxeo.exceptions import HTTPError
 from nuxeo.models import Document
 
 from ...engine.activity import LinkingAction, UploadAction
-from ...exceptions import DirectTransferDuplicateFoundError
 from ...objects import Upload
 from ..local import LocalClient
 from . import BaseUploader
+from .exceptions import DirectTransferDuplicateFoundError
 
 log = getLogger(__name__)
 

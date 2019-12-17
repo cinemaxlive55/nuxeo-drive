@@ -1,0 +1,94 @@
+@startuml
+header Nuxeo Drive - Direct Transfer
+
+' uncomment the line below if you're using computer with a retina display
+' skinparam dpi 300
+!define Table(name,desc) class name as "desc" << (T,#FFAAAA) >>
+' we use bold for primary key
+' green color for unique
+' and underscore for not_null
+!define primary_key(x) <b>x</b>
+!define unique(x) <color:green>x</color>
+!define not_null(x) <u>x</u>
+hide methods
+hide stereotypes
+
+class Manager {
+    (The transfers manager)
+    ==
+    + sessions
+    + current_session
+    + decrease_priority()
+    + increase_priority()
+    + shutdown()
+    + start()
+    + stop()
+}
+
+class Session {
+    (A session manager)
+    ==
+    + transfers
+    + not_null(add())
+    + add_all()
+    + decrease_priority()
+    + increase_priority()
+}
+
+class UploadSession {
+    (An upload session manager)
+    ==
+    + func
+    + add()
+    + add_all()
+}
+
+class DownloadSession {
+    (A download session manager)
+    ==
+    + func
+    + add()
+    + add_all()
+}
+
+Manager::current_session --> Session
+Session --* DownloadSession
+Session --* UploadSession
+
+'
+'Table(Session, "Session\n(A transfers session)") {
+'    + primary_key(id) INTEGER
+'    + not_null(priority) INTEGER
+'    + not_null(state) INTEGER
+'    '.. termination status ..
+'    + not_null(status) INTEGER
+'    + finished DATETIME
+'    + remote_path VARCHAR
+'    + started DATETIME
+'}
+
+'Table(Transfer, "Transfer\n(An item to transfer)") {
+'    + primary_key(id) INTEGER
+'    + not_null(unique(session)) INTEGER
+'    + not_null(unique(local_path)) VARCHAR
+'    + not_null(unique(remote_path)) VARCHAR
+'    + error_count INTEGER
+'    + error_total_count INTEGER
+'    + last_error VARCHAR
+'    + file_size INTEGER
+'    + is_file BOOLEAN
+'    + is_upload BOOLEAN
+'    + remote_ref VARCHAR
+'    + status INTEGER
+'    + transferred_size INTEGER
+'    .. uploads only ..
+'    + batch VARCHAR
+'    + chunk_size INTEGER
+'    + doctype VARCHAR
+'    + replace_blob BOOLEAN
+'    + uploaded BOOLEAN
+'}
+
+'Manager::current_sesion --> Session::id
+'Session::id <-- Transfer::session
+@enduml

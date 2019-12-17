@@ -358,3 +358,18 @@ def test_migration_db_v10(engine_dao):
             Path("/Tests Drive/Live Connect/Test document Live Connect")
         )
         assert not bad_digest_file
+
+
+def test_migration_db_v11(engine_dao):
+    """
+    With NXDRIVE-2006, Direct Transfers were removed from the sync database.
+    Ensure that assertion is true.
+    """
+    # The test file contains 1 record of an ongoing Direct Transfer.
+    with engine_dao("engine_migration_11.db") as dao:
+        # With the v11 migration, it should have been deleted ...
+        states = list(dao.get_states_from_partial_local(Path()))
+        assert len(states) == 1  # The root
+
+        # ... And so for its related upload
+        assert not list(dao.get_uploads())

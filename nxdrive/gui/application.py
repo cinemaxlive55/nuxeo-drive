@@ -845,7 +845,7 @@ class Application(QApplication):
 
     @pyqtSlot(object)
     def _connect_engine(self, engine: Engine) -> None:
-        engine.directTranferDuplicateError.connect(
+        engine.directTransferDuplicateError.connect(
             self._direct_transfer_duplicate_error
         )
         engine.syncStarted.connect(self.change_systray_icon)
