@@ -112,8 +112,14 @@ NuxeoPopup {
                     || (isAuto && pacUrlInput.text)
                 inverted: true
                 onClicked: {
+                    var current_proxy_settings = JSON.parse(api.get_proxy_settings())
+                    var proxy_settings = proxyType.model.get(proxyType.currentIndex).value
+
+                    if (proxy_settings == current_proxy_settings.config) {
+                        control.close()
+                    }
                     if (api.set_proxy_settings(
-                        proxyType.model.get(proxyType.currentIndex).value,
+                        proxy_settings,
                         urlInput.text,
                         pacUrlInput.text
                     )) {
