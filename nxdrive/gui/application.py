@@ -839,7 +839,11 @@ class Application(QApplication):
     def open_authentication_dialog(
         self, url: str, callback_params: Dict[str, str]
     ) -> None:
+        from PyQt5.QtCore import Qt
+        from PyQt5.QtWidgets import QApplication
+
         self.api.callback_params = callback_params
+        QApplication.setOverrideCursor(Qt.WaitCursor)
         if Options.is_frozen:
             """
             Authenticate through the browser.
@@ -850,6 +854,9 @@ class Application(QApplication):
             by opening an nxdrive:// URL.
             """
             self.manager.open_local_file(url)
+
+            # Remove the waiting cursor
+            QApplication.restoreOverrideCursor()
         else:
             self._web_auth_not_frozen(url)
 
@@ -864,7 +871,7 @@ class Application(QApplication):
         """
 
         from nuxeo.client import Nuxeo
-        from PyQt5.QtWidgets import QLineEdit
+        from PyQt5.QtWidgets import QApplication, QLineEdit
 
         dialog = QDialog()
         dialog.setWindowTitle(self.translate("WEB_AUTHENTICATION_WINDOW_TITLE"))
@@ -916,6 +923,10 @@ class Application(QApplication):
         layout.addWidget(buttons)
 
         dialog.setLayout(layout)
+
+        # Remove the waiting cursor
+        QApplication.restoreOverrideCursor()
+
         dialog.exec_()
 
     @pyqtSlot(object)
